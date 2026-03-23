@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=800, initial-scale=1.0">
+<title>Kids Daily Tasks</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap');
+
+  :root {
+    --bg: #f0f0f0;
+    --bg-subtle: #e8e8e8;
+    --card: #ffffff;
+    --text: #2a2a2a;
+    --muted: #888;
+    --border: rgba(0,0,0,0.06);
+    --radius: 20px;
+    --radius-lg: 28px;
+    --shadow: 0 6px 0 rgba(0,0,0,0.08);
+    --shadow-sm: 0 4px 0 rgba(0,0,0,0.08);
+    --shadow-card: 0 6px 0 rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
+    --gina-primary: #c4a8ff;
+    --gina-light: #ede5ff;
+    --gina-bg: #f5f0ff;
+    --gina-border: rgba(196,168,255,0.3);
+    --noah-primary: #0085ca;
+    --noah-light: #e6f3fa;
+    --noah-bg: #edf6fc;
+    --noah-dark: #101820;
+    --noah-border: rgba(0,133,202,0.2);
+    --green: #4caf50;
+    --green-light: #e8f5e9;
+    --red: #ef5350;
+    --red-light: #ffebee;
+    --gold: #f5a623;
+    --gold-light: #fff8e1;
+    --gold-dark: #e8971a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', -apple-system, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .screen {
+    display: none;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── Profile Select ── */
+  .profile-screen {
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    background: linear-gradient(180deg, #f5f5f5 0%, var(--bg) 100%);
+  }
+  .profile-title { text-align: center; }
+  .profile-title h1 { font-size: 42px; font-weight: 900; color: var(--text); letter-spacing: -0.5px; }
+  .profile-title p { font-size: 20px; color: var(--muted); font-weight: 700; margin-top: 4px; }
+
+  .profile-cards { display: flex; gap: 32px; }
+
+  .profile-card {
+    width: 280px; height: 320px;
+    border-radius: var(--radius-lg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 4px solid transparent;
+    box-shadow: var(--shadow-card);
+    position: relative; overflow: hidden;
+    user-select: none; -webkit-user-select: none;
+  }
+  .profile-card:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.08); }
+  .profile-card:hover { transform: translateY(-4px); box-shadow: 0 10px 0 rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06); }
+  .profile-card.gina { background: linear-gradient(145deg, #f8f2ff, var(--gina-light)); border-color: var(--gina-primary); }
+  .profile-card.noah { background: linear-gradient(145deg, #f0f8ff, var(--noah-light)); border-color: var(--noah-primary); }
+
+  .profile-avatar {
+    width: 120px; height: 120px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 64px; background: rgba(255,255,255,0.7);
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.06); overflow: hidden;
+  }
+  .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .profile-card.noah .profile-avatar { background: #101820; }
+  .profile-card.noah .profile-avatar img { object-fit: contain; width: 90%; height: 90%; }
+
+  .profile-name { font-size: 32px; font-weight: 900; letter-spacing: -0.5px; }
+  .profile-card.gina .profile-name { color: #9b7dd4; }
+  .profile-card.noah .profile-name { color: var(--noah-dark); }
+
+  .parent-link {
+    position: fixed; bottom: 20px; right: 20px;
+    font-size: 15px; color: var(--muted); cursor: pointer;
+    padding: 12px 20px; border-radius: 16px;
+    background: var(--card); box-shadow: var(--shadow-sm);
+    font-weight: 700; transition: transform 0.15s;
+    user-select: none; -webkit-user-select: none;
+  }
+  .parent-link:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+
+  /* ── Dashboard ── */
+  .dashboard { max-width: 700px; margin: 0 auto; width: 100%; gap: 20px; }
+
+  .dash-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; }
+  .dash-header-left { display: flex; align-items: center; gap: 16px; }
+  .dash-avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; background: rgba(0,0,0,0.04);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); overflow: hidden;
+  }
+  .dash-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .theme-noah .dash-avatar { background: #101820; }
+  .theme-noah .dash-avatar img { object-fit: contain; width: 85%; height: 85%; }
+  .dash-name { font-size: 28px; font-weight: 900; }
+  .dash-date { font-size: 15px; color: var(--muted); font-weight: 700; }
+
+  .back-btn {
+    font-size: 16px; padding: 12px 24px; border-radius: 16px; border: none;
+    background: var(--card); cursor: pointer; color: var(--text);
+    font-weight: 800; box-shadow: var(--shadow-sm); font-family: inherit;
+    transition: transform 0.15s; user-select: none;
+  }
+  .back-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+
+  /* Coin Banner */
+  .coin-banner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px; border-radius: var(--radius);
+    background: linear-gradient(135deg, #fffbf0, var(--gold-light));
+    border: 3px solid var(--gold); box-shadow: var(--shadow);
+  }
+  .coin-left { display: flex; align-items: center; gap: 16px; }
+  .coin-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(145deg, #ffd740, var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 900; color: #fff;
+    box-shadow: 0 4px 0 var(--gold-dark), inset 0 2px 4px rgba(255,255,255,0.3);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .coin-amount { font-size: 44px; font-weight: 900; color: var(--gold-dark); }
+  .coin-label { font-size: 15px; color: var(--muted); font-weight: 700; }
+  .coin-streak { text-align: right; font-size: 14px; color: var(--muted); font-weight: 700; }
+  .coin-streak strong { display: block; font-size: 24px; color: var(--text); font-weight: 900; }
+
+  /* Tasks */
+  .task-section-title { font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 12px; }
+  .task-progress {
+    font-size: 16px; font-weight: 700; color: var(--muted);
+    background: rgba(0,0,0,0.05); padding: 4px 14px; border-radius: 12px;
+  }
+  .task-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .task-item {
+    display: flex; align-items: center; gap: 18px; padding: 18px 20px;
+    border-radius: var(--radius); background: var(--card); cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, opacity 0.2s;
+    box-shadow: var(--shadow-sm); border: 2px solid var(--border);
+    user-select: none; -webkit-user-select: none;
+  }
+  .task-item:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+  .task-item:hover { border-color: rgba(0,0,0,0.1); }
+  .task-item.done { opacity: 0.45; border-color: transparent; }
+
+  .task-check {
+    width: 44px; height: 44px; border-radius: 14px;
+    border: 3px solid rgba(0,0,0,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+    transition: all 0.15s; background: rgba(0,0,0,0.03);
+  }
+  .task-item.done .task-check {
+    border-color: var(--green); background: var(--green); color: #fff; font-weight: 900;
+  }
+  .task-emoji { font-size: 32px; flex-shrink: 0; }
+  .task-name { font-size: 22px; font-weight: 800; flex: 1; }
+  .task-item.done .task-name { text-decoration: line-through; }
+
+  /* ── Confetti Overlay ── */
+  .confetti-overlay {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    pointer-events: none;
+  }
+  .confetti-overlay.active { display: block; }
+  .confetti-piece {
+    position: absolute; width: 12px; height: 12px;
+    top: -20px; border-radius: 3px;
+    animation: confettiFall linear forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg) scale(0.5); opacity: 0; }
+  }
+
+  /* ── Celebration Screen ── */
+  .celebrate-screen {
+    display: none; position: fixed; inset: 0; z-index: 101;
+    justify-content: center; align-items: center;
+    flex-direction: column; gap: 24px;
+    background: rgba(255,255,255,0.95);
+    padding: 24px;
+  }
+  .celebrate-screen.show { display: flex; }
+  .celebrate-emoji { font-size: 96px; animation: bounceIn 0.6s ease; }
+  .celebrate-title {
+    font-size: 36px; font-weight: 900; text-align: center;
+    animation: bounceIn 0.6s ease 0.1s both;
+  }
+  .celebrate-subtitle {
+    font-size: 22px; font-weight: 700; color: var(--muted); text-align: center;
+    animation: bounceIn 0.6s ease 0.2s both;
+  }
+  .celebrate-verify-btn {
+    padding: 18px 48px; border-radius: 20px; border: none;
+    background: var(--gold); color: #fff; font-size: 22px; font-weight: 900;
+    cursor: pointer; box-shadow: 0 6px 0 var(--gold-dark);
+    font-family: inherit; transition: transform 0.1s;
+    animation: bounceIn 0.6s ease 0.3s both;
+  }
+  .celebrate-verify-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--gold-dark); }
+
+  /* ── Verify Screen (Parent confirms) ── */
+  .verify-screen {
+    display: none; position: fixed; inset: 0; z-index: 102;
+    justify-content: center; align-items: center;
+    flex-direction: column; gap: 20px;
+    background: rgba(255,255,255,0.98);
+    padding: 24px;
+  }
+  .verify-screen.show { display: flex; }
+  .verify-title { font-size: 26px; font-weight: 900; text-align: center; }
+  .verify-subtitle { font-size: 16px; font-weight: 700; color: var(--muted); text-align: center; margin-top: -8px; }
+  .verify-tasks {
+    display: flex; flex-direction: column; gap: 8px;
+    width: 100%; max-width: 500px; max-height: 240px; overflow-y: auto;
+  }
+  .verify-task {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-radius: 14px; background: var(--green-light);
+    font-size: 18px; font-weight: 700;
+  }
+  .verify-task .vtask-emoji { font-size: 24px; }
+  .verify-task .vtask-check { color: var(--green); font-size: 20px; font-weight: 900; }
+  .verify-pin-section { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .verify-pin-label { font-size: 16px; font-weight: 800; color: var(--muted); }
+  .verify-pin-dots { display: flex; gap: 14px; }
+  .verify-pin-dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 3px solid rgba(0,0,0,0.12); background: transparent;
+  }
+  .verify-pin-dot.filled { background: var(--text); border-color: var(--text); }
+  .verify-keypad {
+    display: grid; grid-template-columns: repeat(3, 72px); gap: 10px;
+  }
+  .verify-key {
+    height: 56px; border-radius: 14px; border: none;
+    background: var(--card); font-size: 24px; font-weight: 900;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--text); box-shadow: var(--shadow-sm); font-family: inherit;
+    transition: transform 0.1s;
+  }
+  .verify-key:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+  .verify-key.empty { background: none; box-shadow: none; }
+  .verify-cancel {
+    font-size: 16px; color: var(--muted); cursor: pointer;
+    font-weight: 700; background: none; border: none; font-family: inherit; padding: 8px 20px;
+  }
+
+  /* ── Coin Awarded Screen ── */
+  .coin-awarded-screen {
+    display: none; position: fixed; inset: 0; z-index: 103;
+    justify-content: center; align-items: center;
+    flex-direction: column; gap: 20px;
+    background: rgba(255,255,255,0.98);
+    padding: 24px;
+  }
+  .coin-awarded-screen.show { display: flex; }
+  .coin-awarded-icon {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: linear-gradient(145deg, #ffd740, var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; font-weight: 900; color: #fff;
+    box-shadow: 0 8px 0 var(--gold-dark);
+    animation: bounceIn 0.6s ease;
+  }
+  .coin-awarded-text {
+    font-size: 32px; font-weight: 900; color: var(--gold-dark);
+    animation: bounceIn 0.6s ease 0.15s both;
+  }
+  .coin-awarded-sub {
+    font-size: 18px; font-weight: 700; color: var(--muted);
+    animation: bounceIn 0.6s ease 0.25s both;
+  }
+  .coin-awarded-done {
+    padding: 16px 48px; border-radius: 18px; border: none;
+    background: var(--green); color: #fff; font-size: 20px; font-weight: 900;
+    cursor: pointer; box-shadow: 0 5px 0 #388e3c; font-family: inherit;
+    transition: transform 0.1s;
+    animation: bounceIn 0.6s ease 0.35s both;
+  }
+  .coin-awarded-done:active { transform: translateY(4px); box-shadow: 0 1px 0 #388e3c; }
+
+  @keyframes bounceIn {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.08); }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+  }
+  .shake { animation: shake 0.4s ease; }
+
+  /* ── PIN Entry ── */
+  .pin-screen {
+    justify-content: center; align-items: center; gap: 32px;
+    background: linear-gradient(180deg, #f5f5f5 0%, var(--bg) 100%);
+  }
+  .pin-avatar {
+    width: 80px; height: 80px; border-radius: 50%; overflow: hidden;
+    background: rgba(255,255,255,0.7); box-shadow: inset 0 3px 6px rgba(0,0,0,0.06);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pin-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .pin-avatar.noah-bg { background: #101820; }
+  .pin-avatar.noah-bg img { object-fit: contain; width: 85%; height: 85%; }
+  .pin-lock {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--card); display: flex; align-items: center; justify-content: center;
+    font-size: 40px; box-shadow: var(--shadow-sm);
+  }
+  .pin-screen h2 { font-size: 28px; font-weight: 900; margin-top: -16px; }
+  .pin-dots { display: flex; gap: 20px; }
+  .pin-dot {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 3px solid rgba(0,0,0,0.12); background: transparent;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06); transition: all 0.15s;
+  }
+  .pin-dot.filled { background: var(--text); border-color: var(--text); box-shadow: 0 0 8px rgba(0,0,0,0.15); }
+  .pin-keypad { display: grid; grid-template-columns: repeat(3, 88px); gap: 14px; }
+  .pin-key {
+    height: 72px; border-radius: 18px; border: none; background: var(--card);
+    font-size: 30px; font-weight: 900; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text); box-shadow: var(--shadow-sm); font-family: inherit;
+    transition: transform 0.1s; user-select: none; -webkit-user-select: none;
+  }
+  .pin-key:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+  .pin-key.empty { border: none; background: none; box-shadow: none; cursor: default; }
+  .pin-back-btn {
+    font-size: 18px; color: var(--muted); cursor: pointer; margin-top: 8px;
+    font-weight: 700; background: none; border: none; font-family: inherit; padding: 12px 24px;
+  }
+  .pin-error { color: var(--red); font-weight: 800; font-size: 16px; min-height: 24px; margin-top: -20px; }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-12px); }
+    40% { transform: translateX(12px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+  }
+  .shake { animation: shake 0.4s ease; }
+
+  /* ── Parent Panel ── */
+  .parent-screen { max-width: 700px; margin: 0 auto; width: 100%; gap: 20px; }
+  .parent-header { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; }
+  .parent-header h2 { font-size: 26px; font-weight: 900; }
+
+  .parent-tabs { display: flex; gap: 10px; }
+  .parent-tab {
+    padding: 14px 28px; border-radius: 16px; font-size: 17px; font-weight: 800;
+    cursor: pointer; background: var(--card); color: var(--muted);
+    border: none; box-shadow: var(--shadow-sm); font-family: inherit;
+    transition: transform 0.1s; user-select: none;
+  }
+  .parent-tab:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+  .parent-tab.active { background: var(--text); color: #fff; }
+
+  .parent-section { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+  .parent-section h3 { font-size: 20px; font-weight: 900; margin-bottom: 16px; }
+
+  .parent-task-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-bottom: 2px solid var(--border);
+  }
+  .parent-task-row:last-child { border-bottom: none; }
+  .parent-task-info { display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 700; flex-wrap: wrap; }
+  .parent-task-badges { display: flex; gap: 6px; }
+  .badge { font-size: 12px; padding: 4px 12px; border-radius: 10px; font-weight: 800; }
+  .badge.weekday { background: rgba(0,133,202,0.1); color: var(--noah-primary); }
+  .badge.weekend { background: rgba(245,166,35,0.12); color: var(--gold-dark); }
+  .day-toggles { display: flex; gap: 4px; }
+  .day-toggle {
+    width: 34px; height: 34px; border-radius: 10px; border: none;
+    font-size: 12px; font-weight: 900; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; user-select: none; font-family: inherit;
+    background: rgba(0,133,202,0.12); color: var(--noah-primary);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.06);
+  }
+  .day-toggle.weekend-day {
+    background: rgba(245,166,35,0.12); color: var(--gold-dark);
+  }
+  .day-toggle.off {
+    background: rgba(0,0,0,0.04); color: #ccc;
+    box-shadow: none;
+  }
+  .day-toggle:active { transform: scale(0.9); }
+
+  .delete-btn {
+    width: 44px; height: 44px; border-radius: 14px; border: none;
+    background: var(--red-light); color: var(--red); cursor: pointer;
+    font-size: 22px; font-weight: 900;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-sm); transition: transform 0.1s; flex-shrink: 0;
+  }
+  .delete-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+
+  .add-task-row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .add-task-input {
+    flex: 1; min-width: 120px; padding: 14px 18px;
+    border: 3px solid rgba(0,0,0,0.08); border-radius: 16px;
+    font-size: 17px; font-weight: 700; background: var(--bg);
+    color: var(--text); font-family: inherit;
+  }
+  .add-task-input::placeholder { color: var(--muted); }
+  .add-task-input.emoji-input { width: 70px; min-width: 70px; flex: 0; text-align: center; font-size: 24px; }
+  .add-task-checks {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; font-weight: 800; color: var(--muted);
+  }
+  .add-task-checks label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
+  .add-task-checks input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+  .add-task-btn {
+    padding: 14px 28px; border-radius: 16px; border: none;
+    background: var(--green); color: #fff; font-size: 17px; font-weight: 900;
+    cursor: pointer; box-shadow: var(--shadow-sm); font-family: inherit;
+    transition: transform 0.1s; white-space: nowrap;
+  }
+  .add-task-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+
+  /* Coin Management */
+  .coin-manage { display: flex; flex-direction: column; gap: 20px; }
+  .coin-kid-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px; border-radius: 16px;
+    background: var(--gold-light); border: 2px solid rgba(245,166,35,0.2);
+  }
+  .coin-kid-info { display: flex; align-items: center; gap: 14px; font-size: 20px; font-weight: 800; }
+  .coin-kid-info .kid-emoji { font-size: 28px; }
+  .coin-kid-balance { font-size: 28px; font-weight: 900; color: var(--gold-dark); }
+  .coin-deduct-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .coin-deduct-input {
+    width: 90px; padding: 12px 14px;
+    border: 3px solid rgba(0,0,0,0.08); border-radius: 14px;
+    font-size: 18px; font-weight: 800; text-align: center;
+    background: var(--bg); color: var(--text); font-family: inherit;
+  }
+  .coin-deduct-reason {
+    flex: 1; min-width: 120px; padding: 12px 14px;
+    border: 3px solid rgba(0,0,0,0.08); border-radius: 14px;
+    font-size: 16px; font-weight: 700; background: var(--bg);
+    color: var(--text); font-family: inherit;
+  }
+  .coin-deduct-reason::placeholder { color: var(--muted); }
+  .deduct-btn {
+    padding: 12px 24px; border-radius: 14px; border: none;
+    background: var(--red); color: #fff; font-size: 16px; font-weight: 900;
+    cursor: pointer; box-shadow: var(--shadow-sm); font-family: inherit;
+    transition: transform 0.1s; white-space: nowrap;
+  }
+  .deduct-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+
+  .coin-history { margin-top: 16px; font-size: 15px; color: var(--muted); }
+  .coin-history h3 { color: var(--text); margin-top: 16px; }
+  .coin-history-row {
+    display: flex; justify-content: space-between; padding: 10px 0;
+    border-bottom: 2px solid var(--border); font-weight: 700;
+  }
+  .coin-history-row:last-child { border-bottom: none; }
+  .coin-plus { color: var(--green); font-weight: 900; }
+  .coin-minus { color: var(--red); font-weight: 900; }
+  .coin-history-date { font-size: 13px; color: var(--muted); margin-left: 8px; }
+
+  /* Settings */
+  .settings-section { display: flex; flex-direction: column; gap: 20px; }
+  .settings-group { padding: 16px 20px; border-radius: 16px; background: var(--bg); }
+  .settings-group h4 { font-size: 17px; font-weight: 800; margin-bottom: 12px; }
+  .pin-change-row { display: flex; align-items: center; gap: 10px; }
+  .pin-change-input {
+    width: 120px; padding: 12px 14px;
+    border: 3px solid rgba(0,0,0,0.08); border-radius: 14px;
+    font-size: 20px; font-weight: 800; text-align: center;
+    background: var(--card); color: var(--text); font-family: inherit;
+    letter-spacing: 8px;
+  }
+  .save-pin-btn {
+    padding: 12px 24px; border-radius: 14px; border: none;
+    background: var(--green); color: #fff; font-size: 16px; font-weight: 900;
+    cursor: pointer; box-shadow: var(--shadow-sm); font-family: inherit;
+    transition: transform 0.1s; white-space: nowrap;
+  }
+  .save-pin-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.08); }
+  .pin-saved { color: var(--green); font-weight: 800; font-size: 14px; opacity: 0; transition: opacity 0.3s; }
+  .pin-saved.show { opacity: 1; }
+
+  /* ── Theme Overrides ── */
+  .theme-gina { background: linear-gradient(180deg, var(--gina-bg) 0%, var(--bg) 100%); }
+  .theme-gina .dash-name { color: #9b7dd4; }
+  .theme-gina .dash-avatar { background: var(--gina-light); }
+  .theme-gina .task-item { border-color: var(--gina-border); }
+  .theme-gina .task-item:hover { border-color: rgba(196,168,255,0.5); }
+  .theme-gina .task-item.done .task-check { background: var(--gina-primary); border-color: var(--gina-primary); }
+  .theme-gina .completion-banner { background: var(--gina-light); color: #9b7dd4; border-color: var(--gina-primary); }
+
+  .theme-noah { background: linear-gradient(180deg, var(--noah-bg) 0%, var(--bg) 100%); }
+  .theme-noah .dash-name { color: var(--noah-dark); }
+  .theme-noah .task-item { border-color: var(--noah-border); }
+  .theme-noah .task-item:hover { border-color: rgba(0,133,202,0.35); }
+  .theme-noah .task-item.done .task-check { background: var(--noah-primary); border-color: var(--noah-primary); }
+  .theme-noah .completion-banner { background: var(--noah-light); color: var(--noah-dark); border-color: var(--noah-primary); }
+
+  /* ── Responsive ── */
+  @media (max-width: 800px) {
+    .profile-cards { flex-direction: column; gap: 20px; }
+    .profile-card { width: 260px; height: 200px; }
+    .profile-avatar { width: 80px; height: 80px; font-size: 44px; }
+    .profile-name { font-size: 26px; }
+    .profile-title h1 { font-size: 32px; }
+    .task-name { font-size: 18px; }
+    .task-emoji { font-size: 26px; }
+    .coin-amount { font-size: 36px; }
+    .pin-keypad { grid-template-columns: repeat(3, 72px); }
+    .pin-key { height: 60px; font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: Profile Select -->
+<div id="screen-profile" class="screen profile-screen active">
+  <div class="profile-title">
+    <h1 id="greeting"></h1>
+    <p>Who's ready to crush today's tasks?</p>
+  </div>
+  <div class="profile-cards">
+    <div class="profile-card gina" onclick="App.showKidPin('gina')">
+      <div class="profile-avatar"><img src="assets/gina-avatar.png" alt="Gina"></div>
+      <div class="profile-name">Gina</div>
+    </div>
+    <div class="profile-card noah" onclick="App.showKidPin('noah')">
+      <div class="profile-avatar"><img src="assets/noah-avatar.png" alt="Noah"></div>
+      <div class="profile-name">Noah</div>
+    </div>
+  </div>
+  <div class="parent-link" onclick="App.showParentPin()">Parent</div>
+</div>
+
+<!-- SCREEN 2: Kid Dashboard -->
+<div id="screen-dashboard" class="screen dashboard">
+  <div class="dash-header">
+    <div class="dash-header-left">
+      <div class="dash-avatar" id="dash-avatar"></div>
+      <div>
+        <div class="dash-name" id="dash-name"></div>
+        <div class="dash-date" id="dash-date"></div>
+      </div>
+    </div>
+    <button class="back-btn" onclick="App.showProfile()">&#8592; Back</button>
+  </div>
+  <div class="coin-banner">
+    <div class="coin-left">
+      <div class="coin-icon">$</div>
+      <div>
+        <div class="coin-amount" id="coin-amount">0</div>
+        <div class="coin-label">coins earned</div>
+      </div>
+    </div>
+    <div class="coin-streak">
+      <strong id="streak-count">0</strong>
+      day streak
+    </div>
+  </div>
+  <div class="task-section-title">
+    Today's Tasks <span class="task-progress" id="task-progress"></span>
+  </div>
+  <div class="task-list" id="task-list"></div>
+  <div class="completion-banner" id="completion-banner" style="display:none;"></div>
+</div>
+
+<!-- Confetti Overlay -->
+<div class="confetti-overlay" id="confetti-overlay"></div>
+
+<!-- Celebration Screen -->
+<div class="celebrate-screen" id="celebrate-screen">
+  <div class="celebrate-emoji">🎉</div>
+  <div class="celebrate-title" id="celebrate-title">You did it!</div>
+  <div class="celebrate-subtitle">Show Mom or Dad to get your coin!</div>
+  <button class="celebrate-verify-btn" onclick="App.startVerify()">📋 Verify Tasks</button>
+</div>
+
+<!-- Verify Screen (Parent confirms) -->
+<div class="verify-screen" id="verify-screen">
+  <div class="verify-title">✅ Verify Tasks</div>
+  <div class="verify-subtitle" id="verify-kid-label">Gina completed all tasks today</div>
+  <div class="verify-tasks" id="verify-tasks"></div>
+  <div class="verify-pin-section">
+    <div class="verify-pin-label">Parent PIN to confirm</div>
+    <div class="verify-pin-dots" id="verify-pin-dots">
+      <div class="verify-pin-dot"></div>
+      <div class="verify-pin-dot"></div>
+      <div class="verify-pin-dot"></div>
+      <div class="verify-pin-dot"></div>
+    </div>
+    <div class="verify-keypad" id="verify-keypad">
+      <button class="verify-key">1</button>
+      <button class="verify-key">2</button>
+      <button class="verify-key">3</button>
+      <button class="verify-key">4</button>
+      <button class="verify-key">5</button>
+      <button class="verify-key">6</button>
+      <button class="verify-key">7</button>
+      <button class="verify-key">8</button>
+      <button class="verify-key">9</button>
+      <button class="verify-key empty"></button>
+      <button class="verify-key">0</button>
+      <button class="verify-key">⌫</button>
+    </div>
+  </div>
+  <button class="verify-cancel" onclick="App.cancelVerify()">Cancel</button>
+</div>
+
+<!-- Coin Awarded Screen -->
+<div class="coin-awarded-screen" id="coin-awarded-screen">
+  <div class="coin-awarded-icon">$</div>
+  <div class="coin-awarded-text" id="coin-awarded-text">+1 Coin!</div>
+  <div class="coin-awarded-sub" id="coin-awarded-sub">Great job, Gina!</div>
+  <button class="coin-awarded-done" onclick="App.dismissCoinAwarded()">Done!</button>
+</div>
+
+<!-- SCREEN 3: PIN Entry -->
+<div id="screen-pin" class="screen pin-screen">
+  <div id="pin-icon-area"></div>
+  <h2 id="pin-title"></h2>
+  <div class="pin-error" id="pin-error"></div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+    <div class="pin-dot"></div>
+  </div>
+  <div class="pin-keypad" id="pin-keypad">
+    <div class="pin-key" data-key="1">1</div>
+    <div class="pin-key" data-key="2">2</div>
+    <div class="pin-key" data-key="3">3</div>
+    <div class="pin-key" data-key="4">4</div>
+    <div class="pin-key" data-key="5">5</div>
+    <div class="pin-key" data-key="6">6</div>
+    <div class="pin-key" data-key="7">7</div>
+    <div class="pin-key" data-key="8">8</div>
+    <div class="pin-key" data-key="9">9</div>
+    <div class="pin-key empty"></div>
+    <div class="pin-key" data-key="0">0</div>
+    <div class="pin-key" data-key="back">&#9003;</div>
+  </div>
+  <button class="pin-back-btn" onclick="App.showProfile()">Cancel</button>
+</div>
+
+<!-- SCREEN 4: Parent Panel -->
+<div id="screen-parent" class="screen parent-screen">
+  <div class="parent-header">
+    <h2>Parent Panel</h2>
+    <button class="back-btn" onclick="App.showProfile()">&#8592; Done</button>
+  </div>
+  <div class="parent-tabs" id="parent-tabs">
+    <button class="parent-tab active" data-tab="tasks">Tasks</button>
+    <button class="parent-tab" data-tab="coins">Coins</button>
+    <button class="parent-tab" data-tab="settings">Settings</button>
+  </div>
+  <div id="tab-tasks" class="parent-section"></div>
+  <div id="tab-coins" class="parent-section" style="display:none;"></div>
+  <div id="tab-settings" class="parent-section" style="display:none;"></div>
+</div>
+
+<script>
+/* ================================================================
+   Kids Daily Task Tracker
+   All data stored in localStorage under 'kids-task-tracker'.
+   Single-file app, file:// compatible.
+   ================================================================ */
+
+var App = (function() {
+  'use strict';
+
+  var STORAGE_KEY = 'kids-task-tracker';
+  var KIDS = ['gina', 'noah'];
+  var KID_LABELS = { gina: 'Gina', noah: 'Noah' };
+
+  var DEFAULT_TASKS = [
+    { id: 't1', emoji: '\uD83D\uDECF\uFE0F', name: 'Make Bed', days: [true,true,true,true,true,true,true] },
+    { id: 't2', emoji: '\uD83E\uDEA5', name: 'Brush Teeth AM', days: [true,true,true,true,true,true,true] },
+    { id: 't3', emoji: '\uD83C\uDF92', name: 'Go to School', days: [false,true,true,true,true,true,false] },
+    { id: 't4', emoji: '\uD83C\uDF7D\uFE0F', name: 'Eat Dinner', days: [true,true,true,true,true,true,true] },
+    { id: 't5', emoji: '\uD83E\uDEA5', name: 'Brush Teeth PM', days: [true,true,true,true,true,true,true] },
+    { id: 't6', emoji: '\uD83D\uDEC1', name: 'Take a Bath', days: [true,true,true,true,true,true,true] }
+  ];
+
+  var data = null;
+  var currentKid = null;
+  var pinTarget = null;
+  var pinEntry = '';
+
+  // ── Helpers ──
+
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function yesterdayStr() {
+    var d = new Date();
+    d.setDate(d.getDate() - 1);
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function isWeekend() {
+    var day = new Date().getDay();
+    return day === 0 || day === 6;
+  }
+
+  function getTodaysTasks() {
+    var dayIdx = new Date().getDay(); // 0=Sun, 1=Mon, ..., 6=Sat
+    return data.tasks.filter(function(t) {
+      // migrate old format
+      if (!t.days && (t.weekday !== undefined)) {
+        var wd = t.weekday; var we = t.weekend;
+        t.days = [we, wd, wd, wd, wd, wd, we];
+        delete t.weekday; delete t.weekend;
+      }
+      return t.days && t.days[dayIdx];
+    });
+  }
+
+  function formatDate() {
+    var d = new Date();
+    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+  }
+
+  function getGreeting() {
+    var h = new Date().getHours();
+    if (h < 12) return 'Good Morning! \u2600\uFE0F';
+    if (h < 17) return 'Good Afternoon! \uD83C\uDF24\uFE0F';
+    return 'Good Evening! \uD83C\uDF19';
+  }
+
+  function generateId() {
+    return 't' + Date.now() + Math.random().toString(36).slice(2, 6);
+  }
+
+  function escHtml(str) {
+    var d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  function $(id) { return document.getElementById(id); }
+
+  // ── Persistence ──
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+    catch (e) { /* quota */ }
+  }
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        data = JSON.parse(raw);
+        if (!data.pins) data.pins = { gina: '1234', noah: '5678', parent: '0000' };
+        if (!data.tasks) data.tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
+        KIDS.forEach(function(kid) {
+          if (!data.kids) data.kids = {};
+          if (!data.kids[kid]) data.kids[kid] = makeKidData();
+          if (!data.kids[kid].coinHistory) data.kids[kid].coinHistory = [];
+          if (!data.kids[kid].completions) data.kids[kid].completions = {};
+          if (typeof data.kids[kid].streak !== 'number') data.kids[kid].streak = 0;
+        });
+      } else {
+        data = makeDefaultData();
+      }
+    } catch (e) {
+      data = makeDefaultData();
+    }
+  }
+
+  function makeKidData() {
+    return { coins: 0, streak: 0, lastStreakDate: null, completions: {}, coinHistory: [] };
+  }
+
+  function makeDefaultData() {
+    return {
+      tasks: JSON.parse(JSON.stringify(DEFAULT_TASKS)),
+      pins: { gina: '1234', noah: '5678', parent: '0000' },
+      kids: { gina: makeKidData(), noah: makeKidData() }
+    };
+  }
+
+  // ── Screen Navigation ──
+
+  function showScreen(id) {
+    var screens = document.querySelectorAll('.screen');
+    for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+    $(id).classList.add('active');
+  }
+
+  function showProfile() {
+    $('greeting').textContent = getGreeting();
+    showScreen('screen-profile');
+  }
+
+  // ── PIN ──
+
+  function resetPin() {
+    pinEntry = '';
+    updatePinDots();
+    $('pin-error').textContent = '';
+  }
+
+  function updatePinDots() {
+    var dots = document.querySelectorAll('#pin-dots .pin-dot');
+    for (var i = 0; i < dots.length; i++) {
+      if (i < pinEntry.length) dots[i].classList.add('filled');
+      else dots[i].classList.remove('filled');
+    }
+  }
+
+  function showKidPin(kid) {
+    pinTarget = kid;
+    resetPin();
+    var iconArea = $('pin-icon-area');
+    var title = $('pin-title');
+
+    if (kid === 'noah') {
+      iconArea.textContent = '';
+      var av = document.createElement('div');
+      av.className = 'pin-avatar noah-bg';
+      var img = document.createElement('img');
+      img.src = 'assets/noah-avatar.png';
+      img.alt = 'Noah';
+      av.appendChild(img);
+      iconArea.appendChild(av);
+    } else {
+      iconArea.textContent = '';
+      var av2 = document.createElement('div');
+      av2.className = 'pin-avatar';
+      var img2 = document.createElement('img');
+      img2.src = 'assets/gina-avatar.png';
+      img2.alt = 'Gina';
+      av2.appendChild(img2);
+      iconArea.appendChild(av2);
+    }
+    title.textContent = KID_LABELS[kid] + "'s Password";
+    showScreen('screen-pin');
+  }
+
+  function showParentPin() {
+    pinTarget = 'parent';
+    resetPin();
+    var iconArea = $('pin-icon-area');
+    iconArea.textContent = '';
+    var lock = document.createElement('div');
+    lock.className = 'pin-lock';
+    lock.textContent = '\uD83D\uDD12';
+    iconArea.appendChild(lock);
+    $('pin-title').textContent = 'Parent Mode';
+    showScreen('screen-pin');
+  }
+
+  function handlePinKey(key) {
+    if (key === 'back') {
+      if (pinEntry.length > 0) {
+        pinEntry = pinEntry.slice(0, -1);
+        updatePinDots();
+        $('pin-error').textContent = '';
+      }
+      return;
+    }
+    if (pinEntry.length >= 4) return;
+    pinEntry += key;
+    updatePinDots();
+
+    if (pinEntry.length === 4) {
+      var correct = data.pins[pinTarget];
+      if (pinEntry === correct) {
+        if (pinTarget === 'parent') {
+          renderParentPanel();
+          showScreen('screen-parent');
+        } else {
+          currentKid = pinTarget;
+          renderDashboard();
+          showScreen('screen-dashboard');
+        }
+        pinEntry = '';
+      } else {
+        var dotsEl = $('pin-dots');
+        dotsEl.classList.add('shake');
+        $('pin-error').textContent = 'Wrong password!';
+        setTimeout(function() {
+          dotsEl.classList.remove('shake');
+          pinEntry = '';
+          updatePinDots();
+        }, 500);
+      }
+    }
+  }
+
+  // ── Dashboard ──
+
+  function renderDashboard() {
+    var kid = currentKid;
+    var kidData = data.kids[kid];
+    var dash = $('screen-dashboard');
+    dash.className = 'screen dashboard theme-' + kid;
+
+    // Avatar
+    var avatarEl = $('dash-avatar');
+    avatarEl.textContent = '';
+    var img = document.createElement('img');
+    img.src = 'assets/' + kid + '-avatar.png';
+    img.alt = KID_LABELS[kid];
+    avatarEl.appendChild(img);
+
+    $('dash-name').textContent = KID_LABELS[kid];
+    $('dash-date').textContent = formatDate();
+
+    // Streak check (reset if gap)
+    refreshStreak(kid);
+
+    $('coin-amount').textContent = kidData.coins;
+    $('streak-count').textContent = '\uD83D\uDD25 ' + kidData.streak;
+
+    renderTasks();
+    updateCompletionBanner();
+  }
+
+  function refreshStreak(kid) {
+    var kidData = data.kids[kid];
+    var today = todayStr();
+    var yesterday = yesterdayStr();
+    // If last streak was not today or yesterday, reset
+    if (kidData.lastStreakDate && kidData.lastStreakDate !== today && kidData.lastStreakDate !== yesterday) {
+      kidData.streak = 0;
+      kidData.lastStreakDate = null;
+      save();
+    }
+  }
+
+  function renderTasks() {
+    var kid = currentKid;
+    var kidData = data.kids[kid];
+    var today = todayStr();
+    var tasks = getTodaysTasks();
+
+    if (!kidData.completions[today]) kidData.completions[today] = {};
+    var comp = kidData.completions[today];
+
+    var listEl = $('task-list');
+    listEl.textContent = '';
+
+    tasks.forEach(function(task) {
+      var done = !!comp[task.id];
+      var item = document.createElement('div');
+      item.className = 'task-item' + (done ? ' done' : '');
+
+      var check = document.createElement('div');
+      check.className = 'task-check';
+      check.textContent = done ? '\u2713' : '';
+
+      var emoji = document.createElement('div');
+      emoji.className = 'task-emoji';
+      emoji.textContent = task.emoji;
+
+      var name = document.createElement('div');
+      name.className = 'task-name';
+      name.textContent = task.name;
+
+      item.appendChild(check);
+      item.appendChild(emoji);
+      item.appendChild(name);
+
+      item.addEventListener('click', (function(taskId) {
+        return function() { toggleTask(taskId); };
+      })(task.id));
+
+      listEl.appendChild(item);
+    });
+
+    var doneCount = tasks.filter(function(t) { return !!comp[t.id]; }).length;
+    $('task-progress').textContent = doneCount + ' of ' + tasks.length + ' done';
+  }
+
+  function toggleTask(taskId) {
+    var kidData = data.kids[currentKid];
+    var today = todayStr();
+    if (!kidData.completions[today]) kidData.completions[today] = {};
+    var comp = kidData.completions[today];
+
+    if (comp[taskId]) {
+      delete comp[taskId];
+    } else {
+      comp[taskId] = true;
+    }
+
+    save();
+    renderTasks();
+    updateCompletionBanner();
+  }
+
+  function updateCompletionBanner() {
+    var kid = currentKid;
+    var kidData = data.kids[kid];
+    var today = todayStr();
+    var tasks = getTodaysTasks();
+    var comp = kidData.completions[today] || {};
+    var allDone = tasks.length > 0 && tasks.every(function(t) { return !!comp[t.id]; });
+
+    if (allDone && !comp._coinAwarded && !comp._celebrationShown) {
+      kidData.completions[today]._celebrationShown = true;
+      save();
+      showCelebration(kid);
+    }
+  }
+
+  // ── Confetti ──
+  function launchConfetti() {
+    var overlay = $('confetti-overlay');
+    overlay.classList.add('active');
+    overlay.textContent = '';
+    var colors = ['#ff6b6b','#ffd740','#69f0ae','#64b5f6','#ba68c8','#ff8a65','#4fc3f7','#f06292'];
+    for (var i = 0; i < 80; i++) {
+      var piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = (Math.random() * 100) + '%';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.width = (8 + Math.random() * 10) + 'px';
+      piece.style.height = (8 + Math.random() * 10) + 'px';
+      piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '3px';
+      piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+      piece.style.animationDelay = (Math.random() * 1.5) + 's';
+      overlay.appendChild(piece);
+    }
+    setTimeout(function() { overlay.classList.remove('active'); overlay.textContent = ''; }, 5000);
+  }
+
+  // ── Celebration Flow ──
+  function showCelebration(kid) {
+    launchConfetti();
+    var label = KID_LABELS[kid];
+    $('celebrate-title').textContent = label + ', you did it!';
+    $('celebrate-screen').classList.add('show');
+  }
+
+  function startVerify() {
+    $('celebrate-screen').classList.remove('show');
+
+    var kid = currentKid;
+    var tasks = getTodaysTasks();
+    var label = KID_LABELS[kid];
+    $('verify-kid-label').textContent = label + ' completed all tasks today';
+
+    // show task list
+    var container = $('verify-tasks');
+    container.textContent = '';
+    tasks.forEach(function(t) {
+      var row = document.createElement('div');
+      row.className = 'verify-task';
+      var emoji = document.createElement('span');
+      emoji.className = 'vtask-emoji';
+      emoji.textContent = t.emoji;
+      var name = document.createElement('span');
+      name.style.flex = '1';
+      name.textContent = t.name;
+      var check = document.createElement('span');
+      check.className = 'vtask-check';
+      check.textContent = '✓';
+      row.appendChild(emoji);
+      row.appendChild(name);
+      row.appendChild(check);
+      container.appendChild(row);
+    });
+
+    // reset PIN
+    verifyPinCode = '';
+    updateVerifyDots();
+
+    $('verify-screen').classList.add('show');
+  }
+
+  var verifyPinCode = '';
+
+  function updateVerifyDots() {
+    var dots = $('verify-pin-dots').querySelectorAll('.verify-pin-dot');
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].classList.toggle('filled', i < verifyPinCode.length);
+    }
+  }
+
+  function handleVerifyKey(val) {
+    if (val === '\u232B') {
+      verifyPinCode = verifyPinCode.slice(0, -1);
+      updateVerifyDots();
+      return;
+    }
+    if (verifyPinCode.length >= 4) return;
+    verifyPinCode += val;
+    updateVerifyDots();
+
+    if (verifyPinCode.length === 4) {
+      if (verifyPinCode === data.pins.parent) {
+        awardCoinAfterVerify();
+      } else {
+        var dotsEl = $('verify-pin-dots');
+        dotsEl.classList.add('shake');
+        setTimeout(function() {
+          dotsEl.classList.remove('shake');
+          verifyPinCode = '';
+          updateVerifyDots();
+        }, 500);
+      }
+    }
+  }
+
+  function awardCoinAfterVerify() {
+    $('verify-screen').classList.remove('show');
+
+    var kid = currentKid;
+    var kidData = data.kids[kid];
+    var today = todayStr();
+    var yesterday = yesterdayStr();
+
+    if (!kidData.completions[today]) kidData.completions[today] = {};
+    kidData.completions[today]._coinAwarded = true;
+
+    kidData.coins += 1;
+    kidData.coinHistory.unshift({
+      date: today,
+      amount: 1,
+      reason: 'Completed all tasks',
+      kid: kid
+    });
+
+    // streak
+    if (kidData.lastStreakDate === yesterday) {
+      kidData.streak += 1;
+    } else if (kidData.lastStreakDate !== today) {
+      kidData.streak = 1;
+    }
+    kidData.lastStreakDate = today;
+
+    save();
+
+    // update dashboard
+    $('coin-amount').textContent = kidData.coins;
+    $('streak-count').textContent = '\uD83D\uDD25 ' + kidData.streak;
+
+    // show coin awarded
+    launchConfetti();
+    $('coin-awarded-sub').textContent = 'Great job, ' + KID_LABELS[kid] + '!';
+    $('coin-awarded-screen').classList.add('show');
+  }
+
+  function dismissCoinAwarded() {
+    $('coin-awarded-screen').classList.remove('show');
+  }
+
+  function cancelVerify() {
+    $('verify-screen').classList.remove('show');
+    // allow re-triggering celebration next time they toggle
+    var kid = currentKid;
+    var today = todayStr();
+    if (data.kids[kid].completions[today]) {
+      delete data.kids[kid].completions[today]._celebrationShown;
+      save();
+    }
+  }
+
+  // ── Parent Panel ──
+
+  function renderParentPanel() {
+    renderParentTasks();
+    renderParentCoins();
+    renderParentSettings();
+  }
+
+  function renderParentTasks() {
+    var container = $('tab-tasks');
+    // Build with DOM methods for safety
+    container.textContent = '';
+
+    var h3 = document.createElement('h3');
+    h3.textContent = 'Manage Tasks';
+    container.appendChild(h3);
+
+    data.tasks.forEach(function(task) {
+      var row = document.createElement('div');
+      row.className = 'parent-task-row';
+
+      var info = document.createElement('div');
+      info.className = 'parent-task-info';
+
+      var emojiSpan = document.createElement('span');
+      emojiSpan.textContent = task.emoji;
+      info.appendChild(emojiSpan);
+
+      var nameText = document.createTextNode(' ' + task.name + ' ');
+      info.appendChild(nameText);
+
+      var dayLabels = ['S','M','T','W','T','F','S'];
+      var toggles = document.createElement('div');
+      toggles.className = 'day-toggles';
+
+      // migrate old format if needed
+      if (!task.days && task.weekday !== undefined) {
+        var wd = task.weekday; var we = task.weekend;
+        task.days = [we, wd, wd, wd, wd, wd, we];
+        delete task.weekday; delete task.weekend;
+      }
+
+      for (var d = 0; d < 7; d++) {
+        (function(dayIndex, taskId) {
+          var btn = document.createElement('button');
+          var isWeekend = dayIndex === 0 || dayIndex === 6;
+          var isOn = task.days ? task.days[dayIndex] : false;
+          btn.className = 'day-toggle' + (isWeekend ? ' weekend-day' : '') + (isOn ? '' : ' off');
+          btn.textContent = dayLabels[dayIndex];
+          btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var t = data.tasks.find(function(t) { return t.id === taskId; });
+            if (t && t.days) { t.days[dayIndex] = !t.days[dayIndex]; save(); renderParentTasks(); }
+          });
+          toggles.appendChild(btn);
+        })(d, task.id);
+      }
+
+      info.appendChild(toggles);
+      row.appendChild(info);
+
+      var delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.textContent = '\u00D7';
+      delBtn.addEventListener('click', (function(id) {
+        return function() { deleteTask(id); };
+      })(task.id));
+      row.appendChild(delBtn);
+
+      container.appendChild(row);
+    });
+
+    // Add task row
+    var addRow1 = document.createElement('div');
+    addRow1.className = 'add-task-row';
+
+    var emojiInput = document.createElement('input');
+    emojiInput.className = 'add-task-input emoji-input';
+    emojiInput.id = 'new-task-emoji';
+    emojiInput.placeholder = '\uD83D\uDE0A';
+    emojiInput.maxLength = 4;
+
+    var nameInput = document.createElement('input');
+    nameInput.className = 'add-task-input';
+    nameInput.id = 'new-task-name';
+    nameInput.placeholder = 'New task name...';
+
+    addRow1.appendChild(emojiInput);
+    addRow1.appendChild(nameInput);
+    container.appendChild(addRow1);
+
+    var addRow2 = document.createElement('div');
+    addRow2.className = 'add-task-row';
+    addRow2.style.marginTop = '8px';
+    addRow2.style.alignItems = 'center';
+
+    var dayLabelsAdd = ['S','M','T','W','T','F','S'];
+    var newDaysContainer = document.createElement('div');
+    newDaysContainer.className = 'day-toggles';
+    newDaysContainer.id = 'new-task-days';
+
+    for (var di = 0; di < 7; di++) {
+      (function(dayIndex) {
+        var btn = document.createElement('button');
+        var isWE = dayIndex === 0 || dayIndex === 6;
+        btn.className = 'day-toggle' + (isWE ? ' weekend-day' : '');
+        btn.textContent = dayLabelsAdd[dayIndex];
+        btn.dataset.on = 'true';
+        btn.type = 'button';
+        btn.addEventListener('click', function() {
+          var isOn = btn.dataset.on === 'true';
+          btn.dataset.on = isOn ? 'false' : 'true';
+          btn.classList.toggle('off', isOn);
+        });
+        newDaysContainer.appendChild(btn);
+      })(di);
+    }
+
+    addRow2.appendChild(newDaysContainer);
+
+    var addBtn = document.createElement('button');
+    addBtn.className = 'add-task-btn';
+    addBtn.textContent = '+ Add';
+    addBtn.addEventListener('click', addTask);
+    addRow2.appendChild(addBtn);
+
+    container.appendChild(addRow2);
+  }
+
+  function renderParentCoins() {
+    var container = $('tab-coins');
+    container.textContent = '';
+
+    var h3 = document.createElement('h3');
+    h3.textContent = 'Coin Balance';
+    container.appendChild(h3);
+
+    var manage = document.createElement('div');
+    manage.className = 'coin-manage';
+
+    KIDS.forEach(function(kid, idx) {
+      var kidData = data.kids[kid];
+
+      var kidRow = document.createElement('div');
+      kidRow.className = 'coin-kid-row';
+
+      var kidInfo = document.createElement('div');
+      kidInfo.className = 'coin-kid-info';
+      var kidEmoji = document.createElement('span');
+      kidEmoji.className = 'kid-emoji';
+      kidEmoji.textContent = kid === 'gina' ? '\uD83D\uDC67' : '\uD83E\uDDB8';
+      kidInfo.appendChild(kidEmoji);
+      kidInfo.appendChild(document.createTextNode(' ' + KID_LABELS[kid]));
+      kidRow.appendChild(kidInfo);
+
+      var balance = document.createElement('div');
+      balance.className = 'coin-kid-balance';
+      balance.id = 'balance-' + kid;
+      balance.textContent = '$ ' + kidData.coins;
+      kidRow.appendChild(balance);
+
+      manage.appendChild(kidRow);
+
+      // Deduct row
+      var deductRow = document.createElement('div');
+      deductRow.className = 'coin-deduct-row';
+
+      var amtInput = document.createElement('input');
+      amtInput.className = 'coin-deduct-input';
+      amtInput.type = 'number';
+      amtInput.id = 'deduct-amount-' + kid;
+      amtInput.placeholder = '0';
+      amtInput.min = '1';
+
+      var reasonInput = document.createElement('input');
+      reasonInput.className = 'coin-deduct-reason';
+      reasonInput.id = 'deduct-reason-' + kid;
+      reasonInput.placeholder = 'What did ' + KID_LABELS[kid] + ' spend on?';
+
+      var addCoinBtn = document.createElement('button');
+      addCoinBtn.className = 'add-task-btn';
+      addCoinBtn.style.padding = '12px 20px';
+      addCoinBtn.style.fontSize = '16px';
+      addCoinBtn.textContent = '+ Add';
+      addCoinBtn.addEventListener('click', (function(k) {
+        return function() { addCoins(k); };
+      })(kid));
+
+      var deductBtn = document.createElement('button');
+      deductBtn.className = 'deduct-btn';
+      deductBtn.textContent = '\u2212 Deduct';
+      deductBtn.addEventListener('click', (function(k) {
+        return function() { deductCoins(k); };
+      })(kid));
+
+      deductRow.appendChild(amtInput);
+      deductRow.appendChild(reasonInput);
+      deductRow.appendChild(addCoinBtn);
+      deductRow.appendChild(deductBtn);
+      manage.appendChild(deductRow);
+
+      if (idx === 0) {
+        var spacer = document.createElement('div');
+        spacer.style.height = '8px';
+        manage.appendChild(spacer);
+      }
+    });
+
+    container.appendChild(manage);
+
+    // History
+    var allHistory = [];
+    KIDS.forEach(function(kid) {
+      data.kids[kid].coinHistory.forEach(function(h) {
+        allHistory.push({ date: h.date, amount: h.amount, reason: h.reason, kid: kid });
+      });
+    });
+    allHistory.sort(function(a, b) {
+      if (a.date > b.date) return -1;
+      if (a.date < b.date) return 1;
+      return 0;
+    });
+
+    if (allHistory.length > 0) {
+      var histDiv = document.createElement('div');
+      histDiv.className = 'coin-history';
+
+      var histTitle = document.createElement('h3');
+      histTitle.textContent = 'Recent History';
+      histDiv.appendChild(histTitle);
+
+      var shown = allHistory.slice(0, 20);
+      shown.forEach(function(h) {
+        var row = document.createElement('div');
+        row.className = 'coin-history-row';
+
+        var leftSpan = document.createElement('span');
+        leftSpan.textContent = KID_LABELS[h.kid] + ' \u2014 ' + h.reason + ' ';
+        var dateSpan = document.createElement('span');
+        dateSpan.className = 'coin-history-date';
+        dateSpan.textContent = h.date;
+        leftSpan.appendChild(dateSpan);
+
+        var rightSpan = document.createElement('span');
+        if (h.amount > 0) {
+          rightSpan.className = 'coin-plus';
+          rightSpan.textContent = '+' + h.amount;
+        } else {
+          rightSpan.className = 'coin-minus';
+          rightSpan.textContent = '' + h.amount;
+        }
+
+        row.appendChild(leftSpan);
+        row.appendChild(rightSpan);
+        histDiv.appendChild(row);
+      });
+
+      container.appendChild(histDiv);
+    }
+  }
+
+  function renderParentSettings() {
+    var container = $('tab-settings');
+    container.textContent = '';
+
+    var h3 = document.createElement('h3');
+    h3.textContent = 'Settings';
+    container.appendChild(h3);
+
+    var section = document.createElement('div');
+    section.className = 'settings-section';
+
+    var targets = [
+      { key: 'gina', label: "Gina's PIN" },
+      { key: 'noah', label: "Noah's PIN" },
+      { key: 'parent', label: "Parent PIN" }
+    ];
+
+    targets.forEach(function(t) {
+      var group = document.createElement('div');
+      group.className = 'settings-group';
+
+      var title = document.createElement('h4');
+      title.textContent = t.label;
+      group.appendChild(title);
+
+      var row = document.createElement('div');
+      row.className = 'pin-change-row';
+
+      var input = document.createElement('input');
+      input.className = 'pin-change-input';
+      input.id = 'pin-input-' + t.key;
+      input.type = 'text';
+      input.maxLength = 4;
+      input.pattern = '[0-9]*';
+      input.inputMode = 'numeric';
+      input.value = data.pins[t.key];
+
+      var saveBtn = document.createElement('button');
+      saveBtn.className = 'save-pin-btn';
+      saveBtn.textContent = 'Save';
+      saveBtn.addEventListener('click', (function(key) {
+        return function() { savePin(key); };
+      })(t.key));
+
+      var savedLabel = document.createElement('span');
+      savedLabel.className = 'pin-saved';
+      savedLabel.id = 'pin-saved-' + t.key;
+      savedLabel.textContent = 'Saved!';
+
+      row.appendChild(input);
+      row.appendChild(saveBtn);
+      row.appendChild(savedLabel);
+      group.appendChild(row);
+      section.appendChild(group);
+    });
+
+    container.appendChild(section);
+  }
+
+  function showParentTab(tab, btn) {
+    var tabs = document.querySelectorAll('.parent-tab');
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+    btn.classList.add('active');
+    ['tasks', 'coins', 'settings'].forEach(function(t) {
+      $('tab-' + t).style.display = t === tab ? 'block' : 'none';
+    });
+  }
+
+  // ── Parent Actions ──
+
+  function deleteTask(taskId) {
+    data.tasks = data.tasks.filter(function(t) { return t.id !== taskId; });
+    save();
+    renderParentTasks();
+  }
+
+  function addTask() {
+    var nameEl = $('new-task-name');
+    var emojiEl = $('new-task-emoji');
+    var daysContainer = $('new-task-days');
+
+    var name = nameEl.value.trim();
+    if (!name) { nameEl.focus(); return; }
+
+    var emoji = emojiEl.value.trim() || '\u26AA';
+    var btns = daysContainer.querySelectorAll('.day-toggle');
+    var days = [];
+    for (var i = 0; i < btns.length; i++) {
+      days.push(btns[i].dataset.on === 'true');
+    }
+    if (!days.some(function(d) { return d; })) return;
+
+    data.tasks.push({
+      id: generateId(),
+      emoji: emoji,
+      name: name,
+      days: days
+    });
+    save();
+    renderParentTasks();
+  }
+
+  function addCoins(kid) {
+    var amountEl = $('deduct-amount-' + kid);
+    var reasonEl = $('deduct-reason-' + kid);
+    var amount = parseInt(amountEl.value, 10);
+    var reason = reasonEl.value.trim() || 'Added by parent';
+
+    if (!amount || amount <= 0) { amountEl.focus(); return; }
+
+    var kidData = data.kids[kid];
+    kidData.coins += amount;
+    kidData.coinHistory.unshift({
+      date: todayStr(),
+      amount: amount,
+      reason: reason,
+      kid: kid
+    });
+    save();
+    renderParentCoins();
+    amountEl.value = '';
+    reasonEl.value = '';
+  }
+
+  function deductCoins(kid) {
+    var amountEl = $('deduct-amount-' + kid);
+    var reasonEl = $('deduct-reason-' + kid);
+    var amount = parseInt(amountEl.value, 10);
+    var reason = reasonEl.value.trim();
+
+    if (!amount || amount <= 0) { amountEl.focus(); return; }
+    if (!reason) { reasonEl.focus(); return; }
+
+    var kidData = data.kids[kid];
+    var actual = Math.min(amount, kidData.coins);
+    if (actual <= 0) return;
+
+    kidData.coins -= actual;
+    kidData.coinHistory.unshift({
+      date: todayStr(),
+      amount: -actual,
+      reason: reason,
+      kid: kid
+    });
+    save();
+    renderParentCoins();
+    amountEl.value = '';
+    reasonEl.value = '';
+  }
+
+  function savePin(target) {
+    var input = $('pin-input-' + target);
+    var val = input.value.replace(/\D/g, '').slice(0, 4);
+    if (val.length !== 4) { input.focus(); return; }
+    data.pins[target] = val;
+    input.value = val;
+    save();
+
+    var badge = $('pin-saved-' + target);
+    badge.classList.add('show');
+    setTimeout(function() { badge.classList.remove('show'); }, 1500);
+  }
+
+  // ── Init ──
+
+  function init() {
+    load();
+
+    // Greeting
+    $('greeting').textContent = getGreeting();
+
+    // PIN keypad
+    var keys = document.querySelectorAll('#pin-keypad .pin-key');
+    for (var i = 0; i < keys.length; i++) {
+      (function(key) {
+        key.addEventListener('click', function() {
+          var k = key.getAttribute('data-key');
+          if (k) handlePinKey(k);
+        });
+      })(keys[i]);
+    }
+
+    // Verify keypad
+    var vkeys = document.querySelectorAll('#verify-keypad .verify-key');
+    for (var v = 0; v < vkeys.length; v++) {
+      (function(key) {
+        key.addEventListener('click', function() {
+          var txt = key.textContent.trim();
+          if (txt && txt !== '') handleVerifyKey(txt);
+        });
+      })(vkeys[v]);
+    }
+
+    // Parent tabs
+    var tabBtns = document.querySelectorAll('#parent-tabs .parent-tab');
+    for (var j = 0; j < tabBtns.length; j++) {
+      (function(btn) {
+        btn.addEventListener('click', function() {
+          showParentTab(btn.getAttribute('data-tab'), btn);
+        });
+      })(tabBtns[j]);
+    }
+  }
+
+  return {
+    init: init,
+    showProfile: showProfile,
+    showKidPin: showKidPin,
+    showParentPin: showParentPin,
+    showParentTab: showParentTab,
+    handlePinKey: handlePinKey,
+    startVerify: startVerify,
+    cancelVerify: cancelVerify,
+    dismissCoinAwarded: dismissCoinAwarded
+  };
+})();
+
+document.addEventListener('DOMContentLoaded', function() { App.init(); });
+</script>
+
+</body>
+</html>
