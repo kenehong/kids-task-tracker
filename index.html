@@ -98,6 +98,21 @@
   .profile-card.gina .profile-name { color: #9b7dd4; }
   .profile-card.noah .profile-name { color: var(--noah-dark); }
 
+  .daily-verse {
+    max-width: 480px; text-align: center;
+    padding: 16px 24px; border-radius: 16px;
+    background: var(--card); box-shadow: var(--shadow-sm);
+    margin-top: 16px;
+  }
+  .daily-verse .verse-text {
+    font-size: 17px; font-weight: 700; color: var(--text);
+    line-height: 1.5; font-style: italic;
+  }
+  .daily-verse .verse-ref {
+    font-size: 13px; font-weight: 800; color: var(--muted);
+    margin-top: 6px;
+  }
+
   .parent-link {
     position: fixed; bottom: 20px; right: 20px;
     font-size: 15px; color: var(--muted); cursor: pointer;
@@ -569,6 +584,7 @@
       <div class="profile-name">Noah</div>
     </div>
   </div>
+  <div class="daily-verse" id="daily-verse"></div>
   <div class="parent-link" onclick="App.showParentPin()">Parent</div>
 </div>
 
@@ -771,6 +787,57 @@ var App = (function() {
     if (h < 12) return 'Good Morning! \u2600\uFE0F';
     if (h < 17) return 'Good Afternoon! \uD83C\uDF24\uFE0F';
     return 'Good Evening! \uD83C\uDF19';
+  }
+
+  // ── Daily Bible Verses (kid-friendly) ──
+  var VERSES = [
+    { text: "Be strong and brave! Do not be afraid. The Lord your God is with you everywhere you go.", ref: "Joshua 1:9" },
+    { text: "Be kind to each other. Forgive each other, just as God forgave you.", ref: "Ephesians 4:32" },
+    { text: "Love is patient. Love is kind. It does not want what belongs to others.", ref: "1 Corinthians 13:4" },
+    { text: "I can do all things through Christ who gives me strength.", ref: "Philippians 4:13" },
+    { text: "Trust in the Lord with all your heart. Do not try to understand everything on your own.", ref: "Proverbs 3:5" },
+    { text: "The Lord is my shepherd. I have everything I need.", ref: "Psalm 23:1" },
+    { text: "Children, obey your parents. This is the right thing to do because God has placed them over you.", ref: "Ephesians 6:1" },
+    { text: "Give thanks to the Lord, because He is good. His love lasts forever.", ref: "Psalm 136:1" },
+    { text: "A friend loves you all the time.", ref: "Proverbs 17:17" },
+    { text: "Do to others what you would want them to do to you.", ref: "Matthew 7:12" },
+    { text: "The Lord is my light and the One who saves me. I will not be afraid of anyone.", ref: "Psalm 27:1" },
+    { text: "God is our safe place and our strength. He is always our help when we are in trouble.", ref: "Psalm 46:1" },
+    { text: "Let us not become tired of doing good. At the right time we will get what is coming to us if we do not give up.", ref: "Galatians 6:9" },
+    { text: "Always be joyful. Never stop praying. Be thankful in all situations.", ref: "1 Thessalonians 5:16-18" },
+    { text: "How sweet are Your words to my taste! They are sweeter than honey to my mouth!", ref: "Psalm 119:103" },
+    { text: "The Lord your God is with you. He is a hero who saves you. He will rejoice over you with gladness.", ref: "Zephaniah 3:17" },
+    { text: "You are God's special creation, made to do good things that He planned for you long ago.", ref: "Ephesians 2:10" },
+    { text: "Don't worry about anything. Instead, pray about everything. Tell God what you need and thank Him.", ref: "Philippians 4:6" },
+    { text: "Be happy with those who are happy. Be sad with those who are sad.", ref: "Romans 12:15" },
+    { text: "Wait for the Lord. Be strong and let your heart be brave. Yes, wait for the Lord.", ref: "Psalm 27:14" },
+    { text: "Your word is like a lamp that shows me the way. It is like a light that guides me.", ref: "Psalm 119:105" },
+    { text: "Two people are better than one. They can help each other in everything they do.", ref: "Ecclesiastes 4:9" },
+    { text: "Whatever you do, work at it with all your heart, as if you are working for the Lord.", ref: "Colossians 3:23" },
+    { text: "God loved the world so much that He gave His only Son, so that everyone who believes in Him will have life forever.", ref: "John 3:16" },
+    { text: "You made all the parts of my body. You put me together in my mother's body. I praise You because I am fearfully and wonderfully made.", ref: "Psalm 139:13-14" },
+    { text: "This is the day the Lord has made. Let us rejoice and be glad today!", ref: "Psalm 118:24" },
+    { text: "Above all, love each other deeply, because love covers many wrongs.", ref: "1 Peter 4:8" },
+    { text: "For I know the plans I have for you, says the Lord. Plans to give you hope and a good future.", ref: "Jeremiah 29:11" },
+    { text: "Even young people get tired, but those who trust in the Lord will get new strength.", ref: "Isaiah 40:30-31" },
+    { text: "The Lord is close to everyone who calls out to Him.", ref: "Psalm 145:18" },
+    { text: "Every good and perfect gift is from God. It comes down from the Father who made the lights in the sky.", ref: "James 1:17" }
+  ];
+
+  function showDailyVerse() {
+    var start = new Date(new Date().getFullYear(), 0, 0);
+    var diff = new Date() - start;
+    var dayOfYear = Math.floor(diff / 86400000);
+    var verse = VERSES[dayOfYear % VERSES.length];
+    var container = $('daily-verse');
+    var textEl = document.createElement('div');
+    textEl.className = 'verse-text';
+    textEl.textContent = '"' + verse.text + '"';
+    var refEl = document.createElement('div');
+    refEl.className = 'verse-ref';
+    refEl.textContent = '\u2014 ' + verse.ref;
+    container.appendChild(textEl);
+    container.appendChild(refEl);
   }
 
   function generateId() {
@@ -1634,8 +1701,9 @@ var App = (function() {
   function init() {
     load();
 
-    // Greeting
+    // Greeting + Daily Verse
     $('greeting').textContent = getGreeting();
+    showDailyVerse();
 
     // PIN keypad
     var keys = document.querySelectorAll('#pin-keypad .pin-key');
