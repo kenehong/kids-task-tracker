@@ -2,7 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=800, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kids Tasks">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#f0f0f0">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>Kids Daily Tasks</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap');
@@ -551,6 +558,14 @@
   .theme-noah .task-item.done .task-check { background: var(--noah-primary); border-color: var(--noah-primary); }
   .theme-noah .completion-banner { background: var(--noah-light); color: var(--noah-dark); border-color: var(--noah-primary); }
 
+  /* ── PWA safe area ── */
+  .screen {
+    padding-top: calc(24px + env(safe-area-inset-top));
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    padding-left: calc(24px + env(safe-area-inset-left));
+    padding-right: calc(24px + env(safe-area-inset-right));
+  }
+
   /* ── Responsive ── */
   @media (max-width: 800px) {
     .profile-cards { flex-direction: column; gap: 20px; }
@@ -563,6 +578,16 @@
     .coin-amount { font-size: 36px; }
     .pin-keypad { grid-template-columns: repeat(3, 72px); }
     .pin-key { height: 60px; font-size: 26px; }
+  }
+
+  @media (max-width: 480px) {
+    .profile-card { width: 100%; max-width: 280px; height: 180px; }
+    .profile-title h1 { font-size: 26px; }
+    .profile-title p { font-size: 16px; }
+    .dash-header { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .coin-banner { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .task-row { padding: 14px 16px; }
+    .parent-tab { font-size: 13px; padding: 10px 14px; }
   }
 </style>
 </head>
@@ -1752,6 +1777,11 @@ var App = (function() {
 })();
 
 document.addEventListener('DOMContentLoaded', function() { App.init(); });
+
+// PWA Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
 </script>
 
 </body>
